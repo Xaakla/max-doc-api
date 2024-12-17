@@ -1,9 +1,9 @@
 package com.app.maxdocapi.enums;
 
 public enum Phase {
-    MINUTA("Minuta"),
-    VIGENTE("Vigente"),
-    OBSOLETO("Obsoleto");
+    DRAFT("Draft"),
+    ACTIVE("Active"),
+    OBSOLETE("Obsolete");
 
     private final String description;
 

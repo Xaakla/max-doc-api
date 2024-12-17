@@ -3,6 +3,8 @@ package com.app.maxdocapi.controllers;
 import com.app.maxdocapi.Routes;
 import com.app.maxdocapi.common.ResponseResult;
 import com.app.maxdocapi.common.ResultPageDto;
+import com.app.maxdocapi.enums.Phase;
+import com.app.maxdocapi.models.SubmitDto;
 import com.app.maxdocapi.models.dtos.DocumentNewEdit;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import com.app.maxdocapi.models.dtos.DocumentListDto;
@@ -10,6 +12,7 @@ import com.app.maxdocapi.services.DocumentService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,7 +31,7 @@ public class DocumentController {
     public ResponseResult<ResultPageDto<DocumentListProjection, DocumentListProjection>> findAllPaginated(
             @RequestParam(required = false, defaultValue = "") String title,
             @RequestParam(required = false, defaultValue = "") String acronym,
-            @RequestParam(required = false, defaultValue = "") String phase,
+            @RequestParam(required = false, defaultValue = "") Phase phase,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int itemsPerPage,
             @RequestParam(required = false, defaultValue = "DESC") Sort.Direction sortDirection
@@ -44,5 +47,10 @@ public class DocumentController {
     @PostMapping(value = Routes.Documents.path)
     public ResponseResult<DocumentListDto> save(@RequestBody @Valid DocumentNewEdit dto) {
         return ResponseResult.success(new DocumentListDto(documentService.save(dto)));
+    }
+
+    @PatchMapping(value = Routes.Documents.ById.path)
+    public ResponseResult<DocumentListDto> submit(@PathVariable Long id, @RequestBody @Valid SubmitDto dto) {
+        return ResponseResult.success(new DocumentListDto(documentService.submit(id, dto)));
     }
 }
