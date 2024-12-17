@@ -3,8 +3,9 @@ package com.app.maxdocapi.services;
 import com.app.maxdocapi.database.entities.Document;
 import com.app.maxdocapi.database.repositories.DocumentRepository;
 import com.app.maxdocapi.enums.Phase;
-import com.app.maxdocapi.models.dtos.DocumentNewEdit;
+import com.app.maxdocapi.models.dtos.DocumentCreateDto;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
+import com.app.maxdocapi.models.records.DocumentEditInfoDto;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +30,7 @@ public class DocumentService {
         return documentRepository.findById(id).orElseThrow(() -> new RuntimeException("dasda"));
     }
 
-    public Document save(DocumentNewEdit dto) {
+    public Document save(DocumentCreateDto dto) {
         var document = Optional.ofNullable(dto.getId())
                 .flatMap(documentRepository::findById)
                 .orElse(new Document(
@@ -74,16 +75,28 @@ public class DocumentService {
             throw new RuntimeException("num ta ativo");
         }
 
-        var newDocument = new Document(
+        var draftDocument = new Document(
                 null,
                 document.getTitle(),
                 document.getDescription(),
                 document.getAcronym(),
                 document.getVersion() + 1,
-                Phase.ACTIVE);
-        document.setPhase(Phase.OBSOLETE);
+                Phase.DRAFT);
 
-        documentRepository.save(document);
-        return documentRepository.save(newDocument);
+        return documentRepository.save(draftDocument);
+    }
+
+    @Transactional
+    public Document editInfo(Long id, DocumentEditInfoDto dto) {
+        var document = findById(id);
+
+        if (!document.getPhase().toString().equalsIgnoreCase(Phase.DRAFT.toString())) {
+            throw new RuntimeException("so pode na minuta");
+        }
+
+        document.setTitle(dto.title());
+        document.setDescription(dto.description());
+
+        return documentRepository.save(document);
     }
 }

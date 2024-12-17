@@ -9,6 +9,14 @@ public class Routes {
 
         public static final class ById {
             public static final String path = Documents.path + "/{id}";
+
+            public static final class Submit {
+                public static final String path = ById.path + "/submit";
+            }
+
+            public static final class GenerateVersion {
+                public static final String path = ById.path + "/generate-version";
+            }
         }
     }
 }

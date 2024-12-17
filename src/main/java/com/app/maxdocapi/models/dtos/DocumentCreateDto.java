@@ -4,7 +4,7 @@ import com.app.maxdocapi.enums.Phase;
 
 import java.time.LocalDateTime;
 
-public class DocumentNewEdit {
+public class DocumentCreateDto {
     private Long id;
     private String title;
     private String description;
@@ -14,7 +14,7 @@ public class DocumentNewEdit {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public DocumentNewEdit() {
+    public DocumentCreateDto() {
     }
 
     public Long getId() {

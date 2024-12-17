@@ -4,9 +4,10 @@ import com.app.maxdocapi.Routes;
 import com.app.maxdocapi.common.ResponseResult;
 import com.app.maxdocapi.common.ResultPageDto;
 import com.app.maxdocapi.enums.Phase;
-import com.app.maxdocapi.models.dtos.DocumentNewEdit;
+import com.app.maxdocapi.models.dtos.DocumentCreateDto;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import com.app.maxdocapi.models.dtos.DocumentListDto;
+import com.app.maxdocapi.models.records.DocumentEditInfoDto;
 import com.app.maxdocapi.services.DocumentService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
@@ -44,17 +45,22 @@ public class DocumentController {
     }
 
     @PostMapping(value = Routes.Documents.path)
-    public ResponseResult<DocumentListDto> save(@RequestBody @Valid DocumentNewEdit dto) {
+    public ResponseResult<DocumentListDto> save(@RequestBody @Valid DocumentCreateDto dto) {
         return ResponseResult.success(new DocumentListDto(documentService.save(dto)));
     }
 
-    @PatchMapping(value = Routes.Documents.ById.path)
+    @PatchMapping(value = Routes.Documents.ById.Submit.path)
     public ResponseResult<DocumentListDto> submit(@PathVariable Long id) {
         return ResponseResult.success(new DocumentListDto(documentService.submit(id)));
     }
 
-    @PostMapping(value = Routes.Documents.ById.path)
+    @PostMapping(value = Routes.Documents.ById.GenerateVersion.path)
     public ResponseResult<DocumentListDto> generateVersion(@PathVariable Long id) {
         return ResponseResult.success(new DocumentListDto(documentService.generateVersion(id)));
+    }
+
+    @PatchMapping(value = Routes.Documents.ById.path)
+    public ResponseResult<DocumentListDto> editInfo(@PathVariable Long id, @RequestBody @Valid DocumentEditInfoDto dto) {
+        return ResponseResult.success(new DocumentListDto(documentService.editInfo(id, dto)));
     }
 }
