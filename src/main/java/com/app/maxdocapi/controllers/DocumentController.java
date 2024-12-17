@@ -31,7 +31,7 @@ public class DocumentController {
     public ResponseResult<ResultPageDto<DocumentListProjection, DocumentListProjection>> findAllPaginated(
             @RequestParam(required = false, defaultValue = "") String title,
             @RequestParam(required = false, defaultValue = "") String acronym,
-            @RequestParam(required = false, defaultValue = "") Phase phase,
+            @RequestParam(required = false, defaultValue = "") String phase,
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "10") int itemsPerPage,
             @RequestParam(required = false, defaultValue = "DESC") Sort.Direction sortDirection
