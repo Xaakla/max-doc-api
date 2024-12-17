@@ -3,12 +3,16 @@ package com.app.maxdocapi.controllers;
 import com.app.maxdocapi.Routes;
 import com.app.maxdocapi.common.ResponseResult;
 import com.app.maxdocapi.common.ResultPageDto;
+import com.app.maxdocapi.models.dtos.DocumentNewEdit;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import com.app.maxdocapi.models.dtos.DocumentListDto;
 import com.app.maxdocapi.services.DocumentService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,5 +39,10 @@ public class DocumentController {
     @GetMapping(value = Routes.Documents.ById.path)
     public ResponseResult<DocumentListDto> findById(@PathVariable Long id) {
         return ResponseResult.success(new DocumentListDto(documentService.findById(id)));
+    }
+
+    @PostMapping(value = Routes.Documents.path)
+    public ResponseResult<DocumentListDto> save(@RequestBody @Valid DocumentNewEdit dto) {
+        return ResponseResult.success(new DocumentListDto(documentService.save(dto)));
     }
 }

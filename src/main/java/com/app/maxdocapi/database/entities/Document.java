@@ -49,6 +49,15 @@ public class Document {
     public Document() {
     }
 
+    public Document(Long id, String title, String description, String acronym, int version, Phase phase) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.acronym = acronym;
+        this.version = version;
+        this.phase = phase;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
