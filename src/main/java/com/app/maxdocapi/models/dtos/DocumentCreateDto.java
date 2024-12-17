@@ -16,6 +16,14 @@ public class DocumentCreateDto {
     public DocumentCreateDto() {
     }
 
+    public DocumentCreateDto(Long id, String title, String description, String acronym, int version) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.acronym = acronym;
+        this.version = version;
+    }
+
     public Long getId() {
         return id;
     }

@@ -18,11 +18,11 @@ public interface DocumentRepository extends JpaRepository<Document, Long>, Pagin
     @Query(value = """
             SELECT d FROM Document d
             WHERE
-            trim(lower(function('unaccent', d.title))) LIKE trim(lower(function('unaccent', concat('%', :title, '%')))) OR
-            trim(lower(function('unaccent', d.acronym))) LIKE trim(lower(function('unaccent', concat('%', :acronym, '%')))) OR
-            trim(lower(function('unaccent', d.phase))) LIKE trim(lower(function('unaccent', concat('%', :phase, '%'))))
+            (:title IS NULL OR :title = '' OR trim(lower(function('unaccent', d.title))) LIKE trim(lower(function('unaccent', concat('%', :title, '%'))))) AND
+            (:acronym IS NULL OR :acronym = '' OR trim(lower(function('unaccent', d.acronym))) LIKE trim(lower(function('unaccent', concat('%', :acronym, '%'))))) AND
+            (:phase IS NULL OR :phase = '' OR trim(lower(function('unaccent', d.phase))) LIKE trim(lower(function('unaccent', concat('%', :phase, '%')))))
         """)
-    Page<DocumentListProjection> findAllWithFilters(@Param("title") String title, @Param("acronym") String acronym, @Param("phase") Phase phase, Pageable pageable);
+    Page<DocumentListProjection> findAllWithFilters(@Param("title") String title, @Param("acronym") String acronym, @Param("phase") String phase, Pageable pageable);
 
     List<Document> findAllByAcronym(String acronym);
 }
