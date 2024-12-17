@@ -1,7 +1,6 @@
 package com.app.maxdocapi.database.repositories;
 
 import com.app.maxdocapi.database.entities.Document;
-import com.app.maxdocapi.enums.Phase;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
