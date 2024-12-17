@@ -24,8 +24,8 @@ public class DocumentService {
         this.documentRepository = documentRepository;
     }
 
-    public Page<DocumentListProjection> findAllPaginated(String title, String acronym, Phase phase, int page, int itemsPerPage, Sort.Direction sortDirection) {
-        return documentRepository.findAllWithFilters(title, acronym, phase.name(), PageRequest.of(page, itemsPerPage, Sort.by(sortDirection, "id")));
+    public Page<DocumentListProjection> findAllPaginated(String title, String acronym, String phase, int page, int itemsPerPage, Sort.Direction sortDirection) {
+        return documentRepository.findAllWithFilters(title, acronym, phase, PageRequest.of(page, itemsPerPage, Sort.by(sortDirection, "id")));
     }
 
     public Document findById(Long id) {
