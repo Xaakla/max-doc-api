@@ -1,18 +1,17 @@
 package com.app.maxdocapi.models.dtos;
 
-import com.app.maxdocapi.enums.Phase;
-
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
 
 public class DocumentCreateDto {
     private Long id;
+    @NotBlank(message = "Title is required")
     private String title;
+    @NotBlank(message = "Description is required")
     private String description;
+    @NotBlank(message = "Acronym is required")
     private String acronym;
+    @NotBlank(message = "Version is required")
     private int version;
-    private Phase phase;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     public DocumentCreateDto() {
     }
@@ -55,29 +54,5 @@ public class DocumentCreateDto {
 
     public void setVersion(int version) {
         this.version = version;
-    }
-
-    public Phase getPhase() {
-        return phase;
-    }
-
-    public void setPhase(Phase phase) {
-        this.phase = phase;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }

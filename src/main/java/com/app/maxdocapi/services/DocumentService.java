@@ -3,6 +3,8 @@ package com.app.maxdocapi.services;
 import com.app.maxdocapi.database.entities.Document;
 import com.app.maxdocapi.database.repositories.DocumentRepository;
 import com.app.maxdocapi.enums.Phase;
+import com.app.maxdocapi.exceptions.errors.BadRequestException;
+import com.app.maxdocapi.exceptions.errors.NotFoundException;
 import com.app.maxdocapi.models.dtos.DocumentCreateDto;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import com.app.maxdocapi.models.records.DocumentEditInfoDto;
@@ -27,7 +29,7 @@ public class DocumentService {
     }
 
     public Document findById(Long id) {
-        return documentRepository.findById(id).orElseThrow(() -> new RuntimeException("dasda"));
+        return documentRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Document with id %s not found", id)));
     }
 
     public Document save(DocumentCreateDto dto) {
@@ -72,7 +74,7 @@ public class DocumentService {
         var document = findById(id);
 
         if (!document.getPhase().toString().equalsIgnoreCase(Phase.ACTIVE.toString())) {
-            throw new RuntimeException("num ta ativo");
+            throw new BadRequestException("Only documents with phase ACTIVE can generate version");
         }
 
         var draftDocument = new Document(
@@ -91,7 +93,7 @@ public class DocumentService {
         var document = findById(id);
 
         if (!document.getPhase().toString().equalsIgnoreCase(Phase.DRAFT.toString())) {
-            throw new RuntimeException("so pode na minuta");
+            throw new BadRequestException("Only documents with phase DRAFT can be edited");
         }
 
         document.setTitle(dto.title());
