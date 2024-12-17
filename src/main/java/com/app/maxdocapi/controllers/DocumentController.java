@@ -4,7 +4,6 @@ import com.app.maxdocapi.Routes;
 import com.app.maxdocapi.common.ResponseResult;
 import com.app.maxdocapi.common.ResultPageDto;
 import com.app.maxdocapi.enums.Phase;
-import com.app.maxdocapi.models.SubmitDto;
 import com.app.maxdocapi.models.dtos.DocumentNewEdit;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import com.app.maxdocapi.models.dtos.DocumentListDto;
@@ -50,7 +49,12 @@ public class DocumentController {
     }
 
     @PatchMapping(value = Routes.Documents.ById.path)
-    public ResponseResult<DocumentListDto> submit(@PathVariable Long id, @RequestBody @Valid SubmitDto dto) {
-        return ResponseResult.success(new DocumentListDto(documentService.submit(id, dto)));
+    public ResponseResult<DocumentListDto> submit(@PathVariable Long id) {
+        return ResponseResult.success(new DocumentListDto(documentService.submit(id)));
+    }
+
+    @PostMapping(value = Routes.Documents.ById.path)
+    public ResponseResult<DocumentListDto> generateVersion(@PathVariable Long id) {
+        return ResponseResult.success(new DocumentListDto(documentService.generateVersion(id)));
     }
 }
