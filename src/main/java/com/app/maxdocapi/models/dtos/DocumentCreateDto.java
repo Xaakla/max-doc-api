@@ -1,6 +1,7 @@
 package com.app.maxdocapi.models.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class DocumentCreateDto {
     private Long id;
@@ -10,7 +11,7 @@ public class DocumentCreateDto {
     private String description;
     @NotBlank(message = "Acronym is required")
     private String acronym;
-    @NotBlank(message = "Version is required")
+    @NotNull(message = "Version is required")
     private int version;
 
     public DocumentCreateDto() {

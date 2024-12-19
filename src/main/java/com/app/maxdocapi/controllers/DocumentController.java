@@ -5,12 +5,14 @@ import com.app.maxdocapi.common.ResponseResult;
 import com.app.maxdocapi.common.ResultPageDto;
 import com.app.maxdocapi.enums.Phase;
 import com.app.maxdocapi.models.dtos.DocumentCreateDto;
+import com.app.maxdocapi.models.projections.AcronymGroupListProjection;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import com.app.maxdocapi.models.dtos.DocumentListDto;
 import com.app.maxdocapi.models.records.DocumentEditInfoDto;
 import com.app.maxdocapi.services.DocumentService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class DocumentController {
     private final DocumentService documentService;
@@ -37,6 +40,15 @@ public class DocumentController {
             @RequestParam(required = false, defaultValue = "DESC") Sort.Direction sortDirection
     ) {
         return ResponseResult.success(new ResultPageDto<>(documentService.findAllPaginated(title, acronym, phase, page, itemsPerPage, sortDirection)));
+    }
+
+    @GetMapping(value = Routes.Documents.Acronym.path)
+    public ResponseResult<ResultPageDto<AcronymGroupListProjection, AcronymGroupListProjection>> findAllGroupedByAcronym(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int itemsPerPage,
+            @RequestParam(required = false, defaultValue = "DESC") Sort.Direction sortDirection
+    ) {
+        return ResponseResult.success(new ResultPageDto<>(documentService.findAllGroupedByAcronym(page, itemsPerPage, sortDirection)));
     }
 
     @GetMapping(value = Routes.Documents.ById.path)

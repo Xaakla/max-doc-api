@@ -7,6 +7,10 @@ public class Routes {
     public static final class Documents {
         public static final String path = Routes.root + "/documents";
 
+        public static final class Acronym {
+            public static final String path = Documents.path + "/by-acronym";
+        }
+
         public static final class ById {
             public static final String path = Documents.path + "/{id}";
 

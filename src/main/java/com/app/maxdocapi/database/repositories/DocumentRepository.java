@@ -1,6 +1,7 @@
 package com.app.maxdocapi.database.repositories;
 
 import com.app.maxdocapi.database.entities.Document;
+import com.app.maxdocapi.models.projections.AcronymGroupListProjection;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,5 +24,14 @@ public interface DocumentRepository extends JpaRepository<Document, Long>, Pagin
         """)
     Page<DocumentListProjection> findAllWithFilters(@Param("title") String title, @Param("acronym") String acronym, @Param("phase") String phase, Pageable pageable);
 
+    @Query(value = """
+            SELECT d.acronym AS acronym, COUNT(d) AS quantity
+            FROM Document d
+            GROUP BY d.acronym
+        """)
+    Page<AcronymGroupListProjection> findAllGroupedByAcronym(Pageable pageable);
+
     List<Document> findAllByAcronym(String acronym);
+
+    Boolean existsByAcronymAndVersion(String acronym, int version);
 }

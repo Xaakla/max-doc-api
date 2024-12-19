@@ -6,6 +6,7 @@ import com.app.maxdocapi.enums.Phase;
 import com.app.maxdocapi.exceptions.errors.BadRequestException;
 import com.app.maxdocapi.exceptions.errors.NotFoundException;
 import com.app.maxdocapi.models.dtos.DocumentCreateDto;
+import com.app.maxdocapi.models.projections.AcronymGroupListProjection;
 import com.app.maxdocapi.models.projections.DocumentListProjection;
 import com.app.maxdocapi.models.records.DocumentEditInfoDto;
 import jakarta.transaction.Transactional;
@@ -14,7 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentService {
@@ -28,11 +31,18 @@ public class DocumentService {
         return documentRepository.findAllWithFilters(title, acronym, phase, PageRequest.of(page, itemsPerPage, Sort.by(sortDirection, "id")));
     }
 
+    public Page<AcronymGroupListProjection> findAllGroupedByAcronym(int page, int itemsPerPage, Sort.Direction sortDirection) {
+        return documentRepository.findAllGroupedByAcronym(PageRequest.of(page, itemsPerPage, Sort.by(sortDirection, "acronym")));
+    }
+
     public Document findById(Long id) {
         return documentRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Document with id %s not found", id)));
     }
 
     public Document save(DocumentCreateDto dto) {
+        if (documentRepository.existsByAcronymAndVersion(dto.getAcronym(), dto.getVersion())) {
+            throw new BadRequestException("Já existe um documento nessa versão!");
+        }
         var document = Optional.ofNullable(dto.getId())
                 .flatMap(documentRepository::findById)
                 .orElse(new Document(
@@ -52,11 +62,13 @@ public class DocumentService {
         var document = findById(id);
 
         if (hasActiveDocumentByAcronym(document.getAcronym())) {
-            var active = documentRepository.findAllByAcronym(document.getAcronym())
+            var actives = documentRepository.findAllByAcronym(document.getAcronym())
                     .stream()
-                    .filter(it -> it.getAcronym().equalsIgnoreCase(Phase.ACTIVE.toString())).findFirst().get();
-            active.setPhase(Phase.OBSOLETE);
-            documentRepository.save(active);
+                    .filter(it -> it.getPhase().toString().equalsIgnoreCase(Phase.ACTIVE.toString()))
+                    .peek(it -> it.setPhase(Phase.OBSOLETE))
+                    .collect(Collectors.toList());
+
+            documentRepository.saveAll(actives);
         }
 
         document.setPhase(Phase.ACTIVE);
@@ -65,7 +77,7 @@ public class DocumentService {
 
     private boolean hasActiveDocumentByAcronym(String acronym) {
         return documentRepository.findAllByAcronym(acronym)
-                .stream().anyMatch(it -> it.getAcronym().equals(Phase.ACTIVE.toString()));
+                .stream().anyMatch(it -> it.getPhase().toString().equals(Phase.ACTIVE.toString()));
     }
 
     @Transactional
@@ -76,12 +88,17 @@ public class DocumentService {
             throw new BadRequestException("Only documents with phase ACTIVE can generate version");
         }
 
+        var versionValue = documentRepository.findAllByAcronym(document.getAcronym())
+                .stream()
+                .map(Document::getVersion)
+                .max(Comparator.naturalOrder()).orElseThrow(() -> new BadRequestException("Erro ao calcular nova versão"));
+
         var draftDocument = new Document(
                 null,
                 document.getTitle(),
                 document.getDescription(),
                 document.getAcronym(),
-                document.getVersion() + 1,
+                versionValue + 1,
                 Phase.DRAFT);
 
         return documentRepository.save(draftDocument);
